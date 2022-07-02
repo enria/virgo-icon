@@ -26,7 +26,7 @@ Download [here](https://github.com/enria/virgo-icon/releases/download/v.1.4.2.1/
 
 1. Download svg format icon from [iconfont](https://www.iconfont.cn/)  
 2. Convert svg to ico at [convertico](https://convertico.com/svg-to-ico/)
-3. Rename the ico file to desktop number, e.g., `1.ico`, and put it together with `virgo.exe` in the same fole.  
+3. Rename the ico file to desktop number, e.g., `1.ico`, and put it together with `virgo.exe` in the same folder.  
 ![structure](images/structure.png)
 
 
