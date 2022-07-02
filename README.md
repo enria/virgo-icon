@@ -10,7 +10,7 @@ Download [here](https://github.com/enria/virgo-icon/releases/download/v.1.4.2.1/
 
 ![simple](images/number.jpg)
 
-#### Square
+#### Square (Default)
 
 ![simple](images/square_number.jpg)
 
@@ -18,7 +18,7 @@ Download [here](https://github.com/enria/virgo-icon/releases/download/v.1.4.2.1/
 
 ![simple](images/circle_number.jpg)
 
-### Function
+### Function 
 
 ![simple](images/function.jpg)
 
