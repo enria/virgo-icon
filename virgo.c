@@ -20,6 +20,8 @@
 
 #define NUM_DESKTOPS 4
 
+char *icons[] = {"1.ico","2.ico","3.ico","4.ico"};
+
 typedef struct {
 	HWND *windows;
 	unsigned count;
@@ -65,25 +67,13 @@ static void *stb__sbgrowf(void *arr, unsigned increment, unsigned itemsize)
 	}
 }
 
-static HICON trayicon_draw(Trayicon *t, char *text, unsigned len)
+static void trayicon_draw(Trayicon *t, unsigned number)
 {
-	ICONINFO iconInfo;
-	HBITMAP hOldBitmap;
-	HFONT hOldFont;
-	hOldBitmap = (HBITMAP)SelectObject(t->mdc, t->hBitmap);
-	hOldFont = (HFONT)SelectObject(t->mdc, t->hFont);
-	TextOut(t->mdc, t->bitmapWidth / 4, 0, text, len);
-	SelectObject(t->mdc, hOldBitmap);
-	SelectObject(t->mdc, hOldFont);
-	iconInfo.fIcon = TRUE;
-	iconInfo.xHotspot = iconInfo.yHotspot = 0;
-	iconInfo.hbmMask = iconInfo.hbmColor = t->hBitmap;
-	return CreateIconIndirect(&iconInfo);
+	ExtractIconEx(icons[number], 0, &t->nid.hIcon, NULL, 1);
 }
 
 static void trayicon_init(Trayicon *t)
 {
-	HDC hdc;
 	t->hwnd =
 		CreateWindowA("STATIC", "virgo", 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL);
 	t->bitmapWidth = GetSystemMetrics(SM_CXSMICON);
@@ -91,28 +81,17 @@ static void trayicon_init(Trayicon *t)
 	t->nid.hWnd = t->hwnd;
 	t->nid.uID = 100;
 	t->nid.uFlags = NIF_ICON;
-	hdc = GetDC(t->hwnd);
-	t->hBitmap = CreateCompatibleBitmap(hdc, t->bitmapWidth, t->bitmapWidth);
-	t->mdc = CreateCompatibleDC(hdc);
-	ReleaseDC(t->hwnd, hdc);
-	SetBkColor(t->mdc, RGB(0x00, 0x00, 0x00));
-	SetTextColor(t->mdc, RGB(0x00, 0xFF, 0x00));
-	t->hFont = CreateFont(-MulDiv(11, GetDeviceCaps(t->mdc, LOGPIXELSY), 72), 0,
-						  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, TEXT("Arial"));
-	t->nid.hIcon = trayicon_draw(t, "1", 1);
+	trayicon_draw(t,0);
 	Shell_NotifyIcon(NIM_ADD, &t->nid);
 }
 
 static void trayicon_set(Trayicon *t, unsigned number)
 {
-	char snumber[2];
 	if (number > 9) {
 		return;
 	}
-	snumber[0] = number + '0';
-	snumber[1] = 0;
 	DestroyIcon(t->nid.hIcon);
-	t->nid.hIcon = trayicon_draw(t, snumber, 1);
+	trayicon_draw(t, number);
 	Shell_NotifyIcon(NIM_MODIFY, &t->nid);
 }
 
@@ -292,9 +271,9 @@ static void virgo_go_to_desk(Virgo *v, unsigned desk)
 	}
 	virgo_update(v);
 	windows_hide(&v->desktops[v->current]);
+	trayicon_set(&v->trayicon, desk);
 	windows_show(&v->desktops[desk]);
 	v->current = desk;
-	trayicon_set(&v->trayicon, v->current + 1);
 }
 
 void __main(void) __asm__("__main");
